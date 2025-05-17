@@ -2,13 +2,18 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Vira Asistent</title>
 
   <!-- فونت وزیر -->
   <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
 
   <style>
+    /* جلوگیری از اسکرول */
+    html, body {
+      overflow: hidden;
+    }
+
     body {
       margin: 0;
       height: 100vh;
@@ -19,6 +24,7 @@
       align-items: center;
       justify-content: center;
       font-family: 'Vazir', sans-serif;
+      position: relative;
     }
 
     .robot-face {
@@ -65,13 +71,14 @@
     }
 
     .circle-container {
-      width: 20vw;
-      height: 20vw;
+      width: 25vw; /* بزرگتر */
+      height: 25vw; /* بزرگتر */
       position: fixed;
-      bottom: 3vh;
+      bottom: 8vh; /* کمی بالاتر */
       left: 50%;
       transform: translateX(-50%);
       animation: rotate 8s linear infinite;
+      z-index: 10;
     }
 
     .circle-container img {
@@ -86,7 +93,7 @@
 
     .icon-btn {
       position: fixed;
-      top: 2vh;
+      top: 5vh; /* کمی بالاتر */
       width: 10vw;
       height: 10vw;
       background-color: #2e5e4e;
@@ -131,6 +138,29 @@
       font-size: 3.5vw;
       color: rgba(255, 255, 255, 0.7);
     }
+
+    /* متن خوش آمدگویی */
+    .welcome-text {
+      position: fixed;
+      top: 2vh; /* بالای آیکون‌ها */
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 5vw;
+      font-weight: bold;
+      color: #fff;
+      background: rgba(0,0,0,0.5);
+      padding: 0.5em 1em;
+      border-radius: 10px;
+      z-index: 1000;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .welcome-text.show {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -155,6 +185,9 @@
     <img src="https://s6.uupload.ir/files/275-2758479_loading-circle-png_7bj6.png" alt="rotating circle">
   </div>
 
+  <!-- متن خوش آمدگویی -->
+  <div id="welcomeText" class="welcome-text">خوش آمدید!</div>
+
   <script>
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -164,17 +197,30 @@
       recognition.continuous = true;
       recognition.interimResults = false;
 
+      const welcomeText = document.getElementById('welcomeText');
+      let welcomeTimeout;
+
       recognition.onresult = function(event) {
-        const transcript = event.results[event.results.length - 1][0].transcript.trim();
+        const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
         console.log("🎙️ شما گفتید:", transcript);
+
+        // کلمه "بتا" فارسی یا انگلیسی تشخیص داده شد
+        if (transcript.includes('بتا') || transcript.includes('beta')) {
+          // نمایش متن خوش آمدگویی
+          welcomeText.classList.add('show');
+
+          // بعد از 3 ثانیه متن مخفی شود
+          clearTimeout(welcomeTimeout);
+          welcomeTimeout = setTimeout(() => {
+            welcomeText.classList.remove('show');
+          }, 3000);
+        }
 
         if (transcript.includes('سلام')) {
           const msg = new SpeechSynthesisUtterance('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
           msg.lang = 'fa-IR';
           speechSynthesis.speak(msg);
-        }
-
-        else if (transcript.includes('ساعت') || transcript.includes('الان ساعت چنده')) {
+        } else if (transcript.includes('ساعت') || transcript.includes('الان ساعت چنده')) {
           const now = new Date();
           const time = now.toLocaleTimeString('fa-IR');
           const msg = new SpeechSynthesisUtterance(`الان ساعت ${time} هست`);
