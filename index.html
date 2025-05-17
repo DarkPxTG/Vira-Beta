@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Vira Asistent</title>
 
-  <!-- فونت وزیر -->
   <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
 
   <style>
@@ -108,13 +107,8 @@
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
     }
 
-    .left-icon {
-      left: 4vw;
-    }
-
-    .right-icon {
-      right: 4vw;
-    }
+    .left-icon { left: 4vw; }
+    .right-icon { right: 4vw; }
 
     .title-box {
       position: fixed;
@@ -188,57 +182,106 @@
   <script>
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+    const welcomeText = document.getElementById('welcomeText');
+
+    function typeText(text) {
+      welcomeText.classList.add('show');
+      welcomeText.textContent = '';
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < text.length) {
+          welcomeText.textContent += text[i++];
+        } else {
+          clearInterval(interval);
+        }
+      }, 50);
+    }
+
+    const qaList = {
+      "اسم تو چیه": "من ویرا هستم، دستیار صوتی شما.",
+      "چطوری": "من خوبم، امیدوارم حال شما هم خوب باشه.",
+      "کی ساخته شدی": "من در سال ۲۰۲۵ ساخته شدم.",
+      "کجا هستی": "من در این دستگاه حضور دارم تا به شما کمک کنم.",
+      "سازنده تو کیه": "یک تیم هوشمند منو ساخته.",
+      "چه کاری بلدی": "من می‌تونم به سوالات شما پاسخ بدم، ساعت رو بگم، و اطلاعات مفید ارائه بدم.",
+      "موسیقی پخش کن": "فعلاً این قابلیت فعال نیست، ولی به‌زودی اضافه می‌شه.",
+      "چند سالته": "من تازه متولد شدم، اما خیلی یاد می‌گیرم!",
+      "شوخی بلدی": "آره! چرا رایانه از خانه فرار کرد؟ چون از ویروس ترسید!",
+      "دوست داری چکار کنی": "من عاشق کمک کردن به آدم‌ها هستم.",
+      "چه زبانی بلدی": "فعلاً فارسی، ولی در آینده زبان‌های بیشتری یاد می‌گیرم.",
+      "شب بخیر": "شب شما هم بخیر، خواب‌های شیرین ببینید.",
+      "صبح بخیر": "صبح بخیر! روز خوبی برات آرزو می‌کنم.",
+      "دوست منی": "بله! من همیشه کنارتم.",
+      "حوصله داری": "همیشه برای تو حوصله دارم.",
+      "تو آدمی": "نه، من یه دستیار صوتی هستم.",
+      "بلدی بخندی": "هاها! آره بلدم!",
+      "بازی بلدی": "بازی‌کردن رو دوست دارم ولی فعلاً بلد نیستم!",
+      "کار تو چیه": "کمک کردن به شما و پاسخ دادن به سوالاته.",
+      "ممنون": "خواهش می‌کنم!",
+      "چرا اینجایی": "برای کمک به شما اینجا هستم.",
+      "دلت می‌خواد حرف بزنی": "آره، من همیشه آماده‌ام.",
+      "تو بهترینی": "مرسی از لطفت!",
+      "دوستت دارم": "منم شما رو دوست دارم!",
+      "چه خبر": "همه‌چیز خوبه، امیدوارم برای تو هم همینطور باشه.",
+      "چیکار می‌کنی": "منتظرم تا ازم سوال بپرسی.",
+      "اسم من چیه": "متأسفم، فعلاً نمی‌تونم اسمت رو بدونم.",
+      "تو باهوشی": "سعی می‌کنم هر روز باهوش‌تر بشم!",
+      "سکوت کن": "چشم، ساکت می‌مونم.",
+      "شروع کن": "باشه، من آماده‌ام.",
+      "بسه": "باشه، اگر کاری داشتی من اینجام.",
+      "حالت خوبه": "بله، ممنون که پرسیدی.",
+      "حوصله نداری": "چرا دارم! بگو چی کمکت کنم.",
+      "آیا تو واقعی هستی": "من مجازی هستم، ولی واقعاً اینجام.",
+      "جواب بده": "من همیشه آماده جواب دادن هستم.",
+      "الان ساعت چنده": "ساعت"
+    };
+
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
       recognition.lang = 'fa-IR';
       recognition.continuous = true;
       recognition.interimResults = false;
 
-      const welcomeText = document.getElementById('welcomeText');
-      let welcomeTimeout;
-
-      function playWelcomeAudio() {
-        const msg = new SpeechSynthesisUtterance('خوش آمدید!');
-        msg.lang = 'fa-IR';
-        speechSynthesis.speak(msg);
-      }
-
       recognition.onresult = function(event) {
         const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
         console.log("🎙️ شما گفتید:", transcript);
 
         if (transcript.includes('بتا') || transcript.includes('beta')) {
-          welcomeText.textContent = 'خوش آمدید!';
-          welcomeText.classList.add('show');
-          playWelcomeAudio();
-
-          clearTimeout(welcomeTimeout);
-          welcomeTimeout = setTimeout(() => {
-            welcomeText.classList.remove('show');
-          }, 3000);
-        }
-
-        if (transcript.includes('سلام')) {
+          typeText('خوش آمدید!');
+          const msg = new SpeechSynthesisUtterance('خوش آمدید!');
+          msg.lang = 'fa-IR';
+          speechSynthesis.speak(msg);
+        } else if (transcript.includes('سلام')) {
           const msg = new SpeechSynthesisUtterance('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
           msg.lang = 'fa-IR';
           speechSynthesis.speak(msg);
+          typeText('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
         } else if (transcript.includes('ساعت') || transcript.includes('الان ساعت چنده')) {
           const now = new Date();
-          const hours = now.getHours().toString().padStart(2, '0');
-          const minutes = now.getMinutes().toString().padStart(2, '0');
-          const timeText = `${hours}:${minutes}`;
-
-          const msg = new SpeechSynthesisUtterance(`الان ساعت ${hours} و ${minutes} دقیقه هست`);
+          const hour = now.getHours();
+          const minute = now.getMinutes();
+          const time = `${hour} و ${minute < 10 ? '0' + minute : minute} دقیقه`;
+          const msg = new SpeechSynthesisUtterance(`الان ساعت ${time} است`);
           msg.lang = 'fa-IR';
           speechSynthesis.speak(msg);
-
-          welcomeText.textContent = `الان ساعت ${timeText}`;
-          welcomeText.classList.add('show');
-
-          clearTimeout(welcomeTimeout);
-          welcomeTimeout = setTimeout(() => {
-            welcomeText.classList.remove('show');
-          }, 5000);
+          typeText(`الان ساعت ${time} است`);
+        } else {
+          for (const question in qaList) {
+            if (transcript.includes(question)) {
+              let answer = qaList[question];
+              if (answer === "ساعت") {
+                const now = new Date();
+                const hour = now.getHours();
+                const minute = now.getMinutes();
+                answer = `الان ساعت ${hour} و ${minute < 10 ? '0' + minute : minute} دقیقه است`;
+              }
+              const msg = new SpeechSynthesisUtterance(answer);
+              msg.lang = 'fa-IR';
+              speechSynthesis.speak(msg);
+              typeText(answer);
+              break;
+            }
+          }
         }
 
         recognition.start();
