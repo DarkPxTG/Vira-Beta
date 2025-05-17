@@ -4,9 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Vira Asistent</title>
+
+  <!-- فونت وزیر -->
   <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
+
   <style>
-    html, body { overflow: hidden; }
+    html, body {
+      overflow: hidden;
+    }
+
     body {
       margin: 0;
       height: 100vh;
@@ -19,23 +25,31 @@
       font-family: 'Vazir', sans-serif;
       position: relative;
     }
+
     .robot-face {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 6vh;
     }
+
     .eyes {
       display: flex;
       gap: 12vw;
     }
+
     .eye {
       width: 12vw;
       height: 12vw;
       background: white;
-      box-shadow: 0 0 2px #aaa, 0 0 4px #ccc, inset -3px -3px 0 #eee, inset 3px 3px 0 #ccc;
+      box-shadow:
+        0 0 2px #aaa,
+        0 0 4px #ccc,
+        inset -3px -3px 0 #eee,
+        inset 3px 3px 0 #ccc;
       border-radius: 50%;
     }
+
     .mouth {
       width: 40vw;
       height: 5vh;
@@ -43,10 +57,18 @@
       transition: all 0.3s ease-in-out;
       animation: smileLoop 3s infinite;
     }
+
     @keyframes smileLoop {
-      0%, 90%, 100% { border-radius: 0; height: 5vh; }
-      40%, 60% { border-radius: 50px; height: 3vh; }
+      0%, 90%, 100% {
+        border-radius: 0;
+        height: 5vh;
+      }
+      40%, 60% {
+        border-radius: 50px;
+        height: 3vh;
+      }
     }
+
     .circle-container {
       width: 25vw;
       height: 25vw;
@@ -57,14 +79,17 @@
       animation: rotate 8s linear infinite;
       z-index: 10;
     }
+
     .circle-container img {
       width: 100%;
       height: 100%;
     }
+
     @keyframes rotate {
       0% { transform: translateX(-50%) rotate(0deg); }
       100% { transform: translateX(-50%) rotate(360deg); }
     }
+
     .icon-btn {
       position: fixed;
       top: 5vh;
@@ -82,8 +107,15 @@
       z-index: 999;
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
     }
-    .left-icon { left: 4vw; }
-    .right-icon { right: 4vw; }
+
+    .left-icon {
+      left: 4vw;
+    }
+
+    .right-icon {
+      right: 4vw;
+    }
+
     .title-box {
       position: fixed;
       top: 1vh;
@@ -95,14 +127,17 @@
       pointer-events: none;
       color: white;
     }
+
     .title-box .main-title {
       font-size: 6vw;
       font-weight: bold;
     }
+
     .title-box .sub-title {
       font-size: 3.5vw;
       color: rgba(255, 255, 255, 0.7);
     }
+
     .welcome-text {
       position: fixed;
       top: 2vh;
@@ -120,6 +155,7 @@
       opacity: 0;
       transition: opacity 0.5s ease-in-out;
     }
+
     .welcome-text.show {
       opacity: 1;
     }
@@ -161,33 +197,48 @@
       const welcomeText = document.getElementById('welcomeText');
       let welcomeTimeout;
 
-      function speak(text) {
-        const msg = new SpeechSynthesisUtterance(text);
+      function playWelcomeAudio() {
+        const msg = new SpeechSynthesisUtterance('خوش آمدید!');
         msg.lang = 'fa-IR';
         speechSynthesis.speak(msg);
-      }
-
-      function showWelcome() {
-        welcomeText.classList.add('show');
-        speak('خوش آمدید!');
-        clearTimeout(welcomeTimeout);
-        welcomeTimeout = setTimeout(() => {
-          welcomeText.classList.remove('show');
-        }, 3000);
       }
 
       recognition.onresult = function(event) {
         const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
         console.log("🎙️ شما گفتید:", transcript);
 
+        if (transcript.includes('بتا') || transcript.includes('beta')) {
+          welcomeText.textContent = 'خوش آمدید!';
+          welcomeText.classList.add('show');
+          playWelcomeAudio();
+
+          clearTimeout(welcomeTimeout);
+          welcomeTimeout = setTimeout(() => {
+            welcomeText.classList.remove('show');
+          }, 3000);
+        }
+
         if (transcript.includes('سلام')) {
-          speak('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
+          const msg = new SpeechSynthesisUtterance('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
+          msg.lang = 'fa-IR';
+          speechSynthesis.speak(msg);
         } else if (transcript.includes('ساعت') || transcript.includes('الان ساعت چنده')) {
           const now = new Date();
-          const time = now.toLocaleTimeString('fa-IR');
-          speak(`الان ساعت ${time} هست`);
-        } else if (transcript.includes('بتا') || transcript.includes('beta')) {
-          showWelcome();
+          const hours = now.getHours().toString().padStart(2, '0');
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+          const timeText = `${hours}:${minutes}`;
+
+          const msg = new SpeechSynthesisUtterance(`الان ساعت ${hours} و ${minutes} دقیقه هست`);
+          msg.lang = 'fa-IR';
+          speechSynthesis.speak(msg);
+
+          welcomeText.textContent = `الان ساعت ${timeText}`;
+          welcomeText.classList.add('show');
+
+          clearTimeout(welcomeTimeout);
+          welcomeTimeout = setTimeout(() => {
+            welcomeText.classList.remove('show');
+          }, 5000);
         }
 
         recognition.start();
