@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="fa">
 <head>
   <meta charset="UTF-8" />
@@ -26,17 +27,13 @@
     }
 
     .robot-face {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6vh;
-
-  /* اضافه کن این دو خط برای بالاتر بردن */
-  margin-top: 10vh;  /* اگر می‌خوای بیاره پایین‌تر، منفی بزن مثل -5vh */
-  /* یا */
-  transform: translateY(-60px); /* بالاتر می‌بره به اندازه ۲۰ پیکسل */
-}
-
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6vh;
+      margin-top: 10vh;
+      transform: translateY(-50px);
+    }
 
     .eyes {
       display: flex;
@@ -139,22 +136,22 @@
     }
 
     .welcome-text {
-  position: fixed;
-  top: 10vh; /* به جای 2vh */
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 5vw;
-  font-weight: bold;
-  color: #fff;
-  background: rgba(0,0,0,0.5);
-  padding: 0.5em 1em;
-  border-radius: 10px;
-  z-index: 1000;
-  user-select: none;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-}
+      position: fixed;
+      top: 10vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 5vw;
+      font-weight: bold;
+      color: #fff;
+      background: rgba(0,0,0,0.5);
+      padding: 0.5em 1em;
+      border-radius: 10px;
+      z-index: 1000;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
 
     .welcome-text.show {
       opacity: 1;
@@ -162,7 +159,6 @@
   </style>
 </head>
 <body>
-
 
   <div class="title-box">
     <div class="main-title">Vira Asistent</div>
@@ -186,51 +182,43 @@
 
   <div id="welcomeText" class="welcome-text">خوش آمدید!</div>
 
-   <!-- اینجا دکمه پخش آهنگ اضافه شد -->
-  <button id="playMusicBtn" style="display:none; position: fixed; top: 10px; right: 10px; z-index: 1000;">
-    پخش آهنگ
-  </button>
-
   <script>
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
     const welcomeText = document.getElementById('welcomeText');
 
-   function typeText(text) {
-  welcomeText.classList.add('show');
-  welcomeText.textContent = '';
-  let i = 0;
-  const interval = setInterval(() => {
-    if (i < text.length) {
-      welcomeText.textContent += text[i++];
-    } else {
-      clearInterval(interval);
-      setTimeout(() => {
-        welcomeText.classList.remove('show');
-      }, 3000);  // 5 ثانیه
+    function typeText(text) {
+      welcomeText.classList.add('show');
+      welcomeText.textContent = '';
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < text.length) {
+          welcomeText.textContent += text[i++];
+        } else {
+          clearInterval(interval);
+          setTimeout(() => {
+            welcomeText.classList.remove('show');
+          }, 3000);
+        }
+      }, 50);
     }
-  }, 50);
-}
 
-// تابع محاسبه تشابه ساده
-function similarityCheck(userText, question) {
-  const userWords = userText.split(' ');
-  const questionWords = question.split(' ');
-  let matchCount = 0;
-  questionWords.forEach(word => {
-    if (userWords.includes(word)) {
-      matchCount++;
+    function similarityCheck(userText, question) {
+      const userWords = userText.split(' ');
+      const questionWords = question.split(' ');
+      let matchCount = 0;
+      questionWords.forEach(word => {
+        if (userWords.includes(word)) {
+          matchCount++;
+        }
+      });
+      return (matchCount / questionWords.length) >= 0.5;
     }
-  });
-  return (matchCount / questionWords.length) >= 0.3; // حداقل 30% کلمات مشترک
-}
 
-// لیست سوالات و پاسخ‌ها
-const qaList = {
-  "چطوری هستی": "من خوبم، ممنون که پرسیدی!",
-  "اسمت چیه": "من ویرا هستم، دستیار صوتی شما!",
-  "کی ساخته شدی": "من در سال ۲۰۲۵ ساخته شدم.",
-   "کجا هستی": "من در این دستگاه حضور دارم تا به شما کمک کنم.",
+    const qaList = {
+      "چطوری هستی": "من خوبم، ممنون که پرسیدی!",
+      "اسمت چیه": "من ویرا هستم، دستیار صوتی شما!",
+      "کی ساخته شدی": "من در سال ۲۰۲۵ ساخته شدم.",
+        "کجا هستی": "من در این دستگاه حضور دارم تا به شما کمک کنم.",
       "سازنده تو کیه": "یک تیم هوشمند منو ساخته.",
       "چه کاری بلدی": "من می‌تونم به سوالات شما پاسخ بدم، ساعت رو بگم، و اطلاعات مفید ارائه بدم.",
       "موسیقی پخش کن": "فعلاً این قابلیت فعال نیست، ولی به‌زودی اضافه می‌شه.",
@@ -564,89 +552,79 @@ const qaList = {
   "چرا بعضی‌ها به دوستانشان اعتماد دارند؟": "برای داشتن حمایت و امنیت روانی.",
   "چرا بعضی‌ها به تکنولوژی وابسته‌اند؟": "برای راحتی زندگی و کارایی بیشتر.",
   "چرا بعضی‌ها به فیلم علاقه دارند؟": "برای سرگرمی و یادگیری داستان‌ها.",
-  "چرا بعضی‌ها به دوستی علاقه دارند؟": "برای حمایت، محبت و ارتباط اجتماعی."
-}
+      "الان ساعت چنده": "ساعت"
+    };
 
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'fa-IR';
+      recognition.continuous = true;
+      recognition.interimResults = false;
 
+      recognition.onresult = function(event) {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+        console.log("🎙️ شما گفتید:", transcript);
 
-if (SpeechRecognition) {
-  const recognition = new SpeechRecognition();
-  recognition.lang = 'fa-IR';
-  recognition.continuous = true;
-  recognition.interimResults = false;
-
- recognition.onresult = function(event) {
-  const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-  console.log("🎙️ شما گفتید:", transcript);
-
-}
-  if (transcript.includes('بتا') || transcript.includes('beta')) {
-    typeText('خوش آمدید!');
-    const msg = new SpeechSynthesisUtterance('خوش آمدید!');
-    msg.lang = 'fa-IR';
-    speechSynthesis.speak(msg);
-  } else if (transcript.includes('سلام')) {
-    const msg = new SpeechSynthesisUtterance('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
-    msg.lang = 'fa-IR';
-    speechSynthesis.speak(msg);
-    typeText('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
-  } else if (transcript.includes('ساعت') || transcript.includes('الان ساعت چنده')) {
-    const now = new Date();
-    const hour = now.getHours();
-    const minute = now.getMinutes();
-    const time = `${hour} و ${minute < 10 ? '0' + minute : minute} دقیقه`;
-    const msg = new SpeechSynthesisUtterance(`الان ساعت ${time} است`);
-    msg.lang = 'fa-IR';
-    speechSynthesis.speak(msg);
-    typeText(`الان ساعت ${time} است`);
-    } else {
-      let answered = false;
-      for (const question in qaList) {
-        if (transcript.includes(question) || similarityCheck(transcript, question)) {
-          let answer = qaList[question];
-          if (answer === "ساعت") {
-            const now = new Date();
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            answer = `الان ساعت ${hour} و ${minute < 10 ? '0' + minute : minute} دقیقه است`;
-          }
-          const msg = new SpeechSynthesisUtterance(answer);
+        if (transcript.includes('بتا') || transcript.includes('beta')) {
+          typeText('خوش آمدید!');
+          const msg = new SpeechSynthesisUtterance('خوش آمدید!');
           msg.lang = 'fa-IR';
           speechSynthesis.speak(msg);
-          typeText(answer);
-          answered = true;
-          break;
+        } else if (transcript.includes('سلام')) {
+          const msg = new SpeechSynthesisUtterance('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
+          msg.lang = 'fa-IR';
+          speechSynthesis.speak(msg);
+          typeText('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
+        } else if (transcript.includes('ساعت') || transcript.includes('الان ساعت چنده')) {
+          const now = new Date();
+          const hour = now.getHours();
+          const minute = now.getMinutes();
+          const time = `${hour} و ${minute < 10 ? '0' + minute : minute} دقیقه`;
+          const msg = new SpeechSynthesisUtterance(`الان ساعت ${time} است`);
+          msg.lang = 'fa-IR';
+          speechSynthesis.speak(msg);
+          typeText(`الان ساعت ${time} است`);
+        } else {
+          let answered = false;
+          for (const question in qaList) {
+            if (transcript.includes(question) || similarityCheck(transcript, question)) {
+              let answer = qaList[question];
+              if (answer === "ساعت") {
+                const now = new Date();
+                const hour = now.getHours();
+                const minute = now.getMinutes();
+                answer = `الان ساعت ${hour} و ${minute < 10 ? '0' + minute : minute} دقیقه است`;
+              }
+              const msg = new SpeechSynthesisUtterance(answer);
+              msg.lang = 'fa-IR';
+              speechSynthesis.speak(msg);
+              typeText(answer);
+              answered = true;
+              break;
+            }
+          }
+          if (!answered) {
+            typeText('متأسفانه متوجه نشدم، لطفاً سوال دیگری بپرسید.');
+            const msg = new SpeechSynthesisUtterance('متأسفانه متوجه نشدم، لطفاً سوال دیگری بپرسید.');
+            msg.lang = 'fa-IR';
+            speechSynthesis.speak(msg);
+          }
         }
-      }
-      if (!answered) {
-        typeText('متأسفانه متوجه نشدم، لطفاً سوال دیگری بپرسید.');
-        const msg = new SpeechSynthesisUtterance('متأسفانه متوجه نشدم، لطفاً سوال دیگری بپرسید.');
-        msg.lang = 'fa-IR';
-        speechSynthesis.speak(msg);
-      }
+      };
+
+      recognition.onerror = function(event) {
+        console.error('❌ خطا:', event.error);
+        recognition.start();
+      };
+
+      recognition.onend = function() {
+        recognition.start();
+      };
+
+      recognition.start();
+    } else {
+      alert("مرورگر شما از قابلیت تشخیص صدا پشتیبانی نمی‌کند.");
     }
-
-    recognition.start();
-  };
-
-  recognition.onerror = function(event) {
-    console.error('❌ خطا:', event.error);
-    recognition.start();
-  };
-
-  recognition.onend = function() {
-    recognition.start();
-  };
-
-  if (SpeechRecognition) {
-  // ... تنظیمات و event ها
-
-  recognition.start();
-} else {
-  alert("مرورگر شما از قابلیت تشخیص صدا پشتیبانی نمی‌کند.");
-}
-
   </script>
-
 </body>
 </html>
