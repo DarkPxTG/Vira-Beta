@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vira Asistent</title>
+
+  <!-- فونت وزیر -->
+  <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: url('https://s6.uupload.ir/files/b7bea4f8-6201-4f5e-b019-6ab7eb7ab38f_njty.png') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Vazir', sans-serif;
+    }
+
+    .robot-face {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      image-rendering: pixelated;
+    }
+
+    .eyes {
+      display: flex;
+      gap: 60px;
+    }
+
+    .eye {
+      width: 48px;
+      height: 48px;
+      background: white;
+      box-shadow:
+        0 0 2px #aaa,
+        0 0 4px #ccc,
+        inset -3px -3px 0 #eee,
+        inset 3px 3px 0 #ccc;
+      image-rendering: pixelated;
+    }
+
+    .mouth {
+      width: 140px;
+      height: 32px;
+      border: 5px solid white;
+      border-radius: 0;
+      transition: all 0.3s ease-in-out;
+      animation: smileLoop 3s infinite;
+      image-rendering: pixelated;
+    }
+
+    @keyframes smileLoop {
+      0%, 90%, 100% {
+        border-radius: 0;
+        height: 32px;
+      }
+      40%, 60% {
+        border-radius: 60px;
+        height: 18px;
+      }
+    }
+
+    .circle-container {
+      width: 100px;
+      height: 100px;
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: rotate 8s linear infinite;
+    }
+
+    .circle-container img {
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes rotate {
+      0% { transform: translateX(-50%) rotate(0deg); }
+      100% { transform: translateX(-50%) rotate(360deg); }
+    }
+
+    .icon-btn {
+      position: fixed;
+      top: 20px;
+      width: 44px;
+      height: 44px;
+      background-color: #2e5e4e;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+      z-index: 999;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
+
+    .left-icon {
+      left: 20px;
+    }
+
+    .right-icon {
+      right: 20px;
+    }
+
+    .title-box {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 998;
+      user-select: none;
+      pointer-events: none;
+      color: white;
+      line-height: 1.3;
+    }
+
+    .title-box .main-title {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .title-box .sub-title {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: normal;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="title-box">
+    <div class="main-title">Vira Asistent</div>
+    <div class="sub-title">Version Beta</div>
+  </div>
+
+  <div class="icon-btn left-icon">+</div>
+  <div class="icon-btn right-icon">!</div>
+
+  <div class="robot-face">
+    <div class="eyes">
+      <div class="eye"></div>
+      <div class="eye"></div>
+    </div>
+    <div class="mouth"></div>
+  </div>
+
+  <div class="circle-container">
+    <img src="https://s6.uupload.ir/files/275-2758479_loading-circle-png_7bj6.png" alt="rotating circle">
+  </div>
+
+  <script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'fa-IR';
+      recognition.continuous = true;
+      recognition.interimResults = false;
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim();
+        console.log("🎙️ شما گفتید:", transcript);
+
+        if (transcript.includes('سلام')) {
+          const msg = new SpeechSynthesisUtterance('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
+          msg.lang = 'fa-IR';
+          speechSynthesis.speak(msg);
+        }
+
+        else if (transcript.includes('ساعت') || transcript.includes('الان ساعت چنده')) {
+          const now = new Date();
+          const time = now.toLocaleTimeString('fa-IR');
+          const msg = new SpeechSynthesisUtterance(`الان ساعت ${time} هست`);
+          msg.lang = 'fa-IR';
+          speechSynthesis.speak(msg);
+        }
+
+        recognition.start(); // ادامه گوش دادن
+      };
+
+      recognition.onerror = function(event) {
+        console.error('❌ خطا:', event.error);
+        recognition.start();
+      };
+
+      recognition.onend = function() {
+        recognition.start();
+      };
+
+      recognition.start();
+    } else {
+      alert("مرورگر شما از قابلیت تشخیص صدا پشتیبانی نمی‌کند.");
+    }
+  </script>
+
+</body>
+</html>
