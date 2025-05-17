@@ -195,7 +195,7 @@
       clearInterval(interval);
       setTimeout(() => {
         welcomeText.classList.remove('show');
-      }, 3000);  // 3 ثانیه
+      }, 3000);  // 5 ثانیه
     }
   }, 50);
 }
@@ -323,29 +323,35 @@ if (SpeechRecognition) {
   recognition.continuous = true;
   recognition.interimResults = false;
 
-  recognition.onresult = function(event) {
-    const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-    console.log("🎙️ شما گفتید:", transcript);
+ recognition.onresult = function(event) {
+  const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+  console.log("🎙️ شما گفتید:", transcript);
 
-    if (transcript.includes('بتا') || transcript.includes('beta')) {
-      typeText('خوش آمدید!');
-      const msg = new SpeechSynthesisUtterance('خوش آمدید!');
-      msg.lang = 'fa-IR';
-      speechSynthesis.speak(msg);
-    } else if (transcript.includes('سلام')) {
-      const msg = new SpeechSynthesisUtterance('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
-      msg.lang = 'fa-IR';
-      speechSynthesis.speak(msg);
-      typeText('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
-    } else if (transcript.includes('ساعت') || transcript.includes('الان ساعت چنده')) {
-      const now = new Date();
-      const hour = now.getHours();
-      const minute = now.getMinutes();
-      const time = `${hour} و ${minute < 10 ? '0' + minute : minute} دقیقه`;
-      const msg = new SpeechSynthesisUtterance(`الان ساعت ${time} است`);
-      msg.lang = 'fa-IR';
-      speechSynthesis.speak(msg);
-      typeText(`الان ساعت ${time} است`);
+  if (transcript.includes(' اهنگ بوکانی بزار ')) {
+    const audio = new Audio('https://voca.ro/182Jyo2VEVBz'); // ⬅️ لینک مستقیم آهنگ
+    audio.play();
+    return; // ⬅️ ادامه اجرا متوقف میشه
+  }
+
+  if (transcript.includes('بتا') || transcript.includes('beta')) {
+    typeText('خوش آمدید!');
+    const msg = new SpeechSynthesisUtterance('خوش آمدید!');
+    msg.lang = 'fa-IR';
+    speechSynthesis.speak(msg);
+  } else if (transcript.includes('سلام')) {
+    const msg = new SpeechSynthesisUtterance('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
+    msg.lang = 'fa-IR';
+    speechSynthesis.speak(msg);
+    typeText('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
+  } else if (transcript.includes('ساعت') || transcript.includes('الان ساعت چنده')) {
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const time = `${hour} و ${minute < 10 ? '0' + minute : minute} دقیقه`;
+    const msg = new SpeechSynthesisUtterance(`الان ساعت ${time} است`);
+    msg.lang = 'fa-IR';
+    speechSynthesis.speak(msg);
+    typeText(`الان ساعت ${time} است`);
     } else {
       let answered = false;
       for (const question in qaList) {
