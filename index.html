@@ -26,11 +26,17 @@
     }
 
     .robot-face {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6vh;
-    }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6vh;
+
+  /* اضافه کن این دو خط برای بالاتر بردن */
+  margin-top: 10vh;  /* اگر می‌خوای بیاره پایین‌تر، منفی بزن مثل -5vh */
+  /* یا */
+  transform: translateY(-35px); /* بالاتر می‌بره به اندازه ۲۰ پیکسل */
+}
+
 
     .eyes {
       display: flex;
@@ -327,9 +333,14 @@ if (SpeechRecognition) {
   const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
   console.log("🎙️ شما گفتید:", transcript);
 
-  if (transcript.includes(' اهنگ بوکانی بزار ')) {
-    const audio = new Audio('https://voca.ro/182Jyo2VEVBz'); // ⬅️ لینک مستقیم آهنگ
-    audio.play();
+  if (
+  transcript.includes('پخش آهنگ') ||
+  transcript.includes('پلی کن') ||
+  transcript.includes('آهنگ بذار') ||
+  transcript.includes('آهنگ گوش بدم')
+) {
+  const audio = new Audio('https://voca.ro/1e9mQE7D2dU4');
+  audio.play();
     return; // ⬅️ ادامه اجرا متوقف میشه
   }
 
