@@ -200,16 +200,20 @@
       const welcomeText = document.getElementById('welcomeText');
       let welcomeTimeout;
 
+      function playWelcomeAudio() {
+        const msg = new SpeechSynthesisUtterance('خوش آمدید!');
+        msg.lang = 'fa-IR';
+        speechSynthesis.speak(msg);
+      }
+
       recognition.onresult = function(event) {
         const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
         console.log("🎙️ شما گفتید:", transcript);
 
-        // کلمه "بتا" فارسی یا انگلیسی تشخیص داده شد
         if (transcript.includes('بتا') || transcript.includes('beta')) {
-          // نمایش متن خوش آمدگویی
           welcomeText.classList.add('show');
+          playWelcomeAudio();
 
-          // بعد از 3 ثانیه متن مخفی شود
           clearTimeout(welcomeTimeout);
           welcomeTimeout = setTimeout(() => {
             welcomeText.classList.remove('show');
