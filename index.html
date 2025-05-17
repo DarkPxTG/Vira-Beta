@@ -139,27 +139,9 @@
       color: rgba(255, 255, 255, 0.7);
     }
 
-    /* متن خوش آمدگویی */
+    /* حذف نمایش متن خوش آمدگویی */
     .welcome-text {
-      position: fixed;
-      top: 2vh; /* بالای آیکون‌ها */
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 5vw;
-      font-weight: bold;
-      color: #fff;
-      background: rgba(0,0,0,0.5);
-      padding: 0.5em 1em;
-      border-radius: 10px;
-      z-index: 1000;
-      user-select: none;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
-    }
-
-    .welcome-text.show {
-      opacity: 1;
+      display: none !important;
     }
   </style>
 </head>
@@ -185,8 +167,7 @@
     <img src="https://s6.uupload.ir/files/275-2758479_loading-circle-png_7bj6.png" alt="rotating circle">
   </div>
 
-  <!-- متن خوش آمدگویی -->
-  <div id="welcomeText" class="welcome-text">خوش آمدید!</div>
+  <!-- متن خوش آمدگویی حذف شد -->
 
   <script>
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -197,39 +178,35 @@
       recognition.continuous = true;
       recognition.interimResults = false;
 
-      const welcomeText = document.getElementById('welcomeText');
-      let welcomeTimeout;
+      const synth = window.speechSynthesis;
 
-      function playWelcomeAudio() {
-        const msg = new SpeechSynthesisUtterance('خوش آمدید!');
-        msg.lang = 'fa-IR';
-        speechSynthesis.speak(msg);
+      function speak(text) {
+        if (synth.speaking) {
+          synth.cancel();
+        }
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'fa-IR';
+        synth.speak(utter);
       }
 
       recognition.onresult = function(event) {
         const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
         console.log("🎙️ شما گفتید:", transcript);
 
-        if (transcript.includes('بتا') || transcript.includes('beta')) {
-          welcomeText.classList.add('show');
-          playWelcomeAudio();
-
-          clearTimeout(welcomeTimeout);
-          welcomeTimeout = setTimeout(() => {
-            welcomeText.classList.remove('show');
-          }, 3000);
-        }
+        // همه جواب‌ها فقط صوتی باشه، متن نمایش داده نشه
 
         if (transcript.includes('سلام')) {
-          const msg = new SpeechSynthesisUtterance('سلام! من ویرا هستم. چطور می‌تونم کمک‌تون کنم؟');
-          msg.lang = 'fa-IR';
-          speechSynthesis.speak(msg);
+          speak('سلام! من ویرا هستم. چطور می‌توانم کمک‌تان کنم؟');
+        } else if (transcript.includes('بتا')) {
+          speak('شما در نسخه بتا هستید.');
         } else if (transcript.includes('ساعت') || transcript.includes('الان ساعت چنده')) {
           const now = new Date();
           const time = now.toLocaleTimeString('fa-IR');
-          const msg = new SpeechSynthesisUtterance(`الان ساعت ${time} هست`);
-          msg.lang = 'fa-IR';
-          speechSynthesis.speak(msg);
+          speak('الان ساعت ' + time + ' هست.');
+        } else if (transcript.includes('خداحافظ') || transcript.includes('خداحافظی')) {
+          speak('خداحافظ! روز خوبی داشته باشید.');
+        } else if (transcript.length > 0) {
+          speak('متوجه نشدم، لطفا دوباره بگویید.');
         }
 
         recognition.start();
